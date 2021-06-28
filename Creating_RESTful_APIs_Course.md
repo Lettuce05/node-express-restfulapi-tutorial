@@ -38,27 +38,27 @@ RESTful APIs allow us to interact with a database(backend) through HTTP requests
 2. Add the following to the scripts value in the package.json file. This line of code will allow us to start our node server and makesure that it compiles the code with babel.
 
    ```
-       // package.json
-       "scripts": {
-           "start": "nodemon ./index.js --exec babel-node -e js"
-       }
+    // package.json
+    "scripts": {
+        "start": "nodemon ./index.js --exec babel-node -e js"
+    }
    ```
 
 3. In the root of your project directory create an `index.js` file with the following code. This will be the base file for our server.
 
    ```
-       import express from "express";
+    import express from "express";
 
-       const app = express();
-       const PORT = 4000;
+    const app = express();
+    const PORT = 4000;
 
-       app.get("/", (req, res) => {
-           res.send(`Node and express server running on port ${PORT}`);
-       });
+    app.get("/", (req, res) => {
+        res.send(`Node and express server running on port ${PORT}`);
+    });
 
-       app.listen(PORT, () => {
-           console.log(`Your server is running on port ${PORT}`);
-       });
+    app.listen(PORT, () => {
+        console.log(`Your server is running on port ${PORT}`);
+    });
    ```
 
    - `const app = express();` creates an instance of our express app/server.
@@ -68,13 +68,13 @@ RESTful APIs allow us to interact with a database(backend) through HTTP requests
 
 4. In the root of your project directory create an `.babelrc` file with the following code. When babel is called to execute by the start script, this file will tell the transpiler what presets to use.
    ```
-       //.babelrc
-       {
-           "presets": [
-               "env",
-               "stage-0"
-           ]
-       }
+    //.babelrc
+    {
+        "presets": [
+            "env",
+            "stage-0"
+        ]
+    }
    ```
 5. In the terminal run the command `npm start` to start the express server on port 4000. `npm start` runs the script that we created earlier in the `package.json` file.
 
@@ -89,7 +89,7 @@ RESTful APIs allow us to interact with a database(backend) through HTTP requests
 In this section we will create the project file structure. Please create the necessary files to match the file structure below.
 
 ```
-project
+CRM
 │   .babelrc
 │   index.js
 │   package-lock.json
@@ -112,44 +112,47 @@ project
 In this section we will create basic routing endpoints for our server.
 
 1. In the `crmRoutes.js file` insert the following code to create basic routing endpoints for GET, POST, PUT, and DELETE.
+
    ```
-       // ./src/routes/crmRoutes.js
-       const routes = (app) => {
-         app
-           .route("/contact")
-           .get((req, res) => res.send("GET request successful!"))
-           .post((req, res) => res.send("POST request successful!"));
+    // ./src/routes/crmRoutes.js
+    const routes = (app) => {
+        app
+        .route("/contact")
+        .get((req, res) => res.send("GET request successful!"))
+        .post((req, res) => res.send("POST request successful!"));
 
-         app
-           .route("/contact/:contactID")
-           .put((req, res) => res.send("PUT request successful!"))
-           .delete((req, res) => res.send("DELETE request successful!"));
-       };
+        app
+        .route("/contact/:contactID")
+        .put((req, res) => res.send("PUT request successful!"))
+        .delete((req, res) => res.send("DELETE request successful!"));
+    };
 
-       export default routes;
+    export default routes;
    ```
 
 - `.route("/route")` designates the route that the app is listening for
 - `.get()`,`.post()`,`.put()`, and `.delete()` designate the allowed http protocols and a callback function with how the server should respond.
 
 2. Modify index.js to match the following code (Add the indicated lines). In the following code we are importing the routes function that we created and we are calling it with our app (express instance) as the argument.
+
    ```
-       import express from "express";
-       import routes from "./src/routes/crmRoutes"; // ***ADD THIS LINE***
+    import express from "express";
+    import routes from "./src/routes/crmRoutes"; // ***ADD THIS LINE***
 
-       const app = express();
-       const PORT = 4000;
+    const app = express();
+    const PORT = 4000;
 
-       routes(app); // ***ADD THIS LINE***
+    routes(app); // ***ADD THIS LINE***
 
-       app.get("/", (req, res) => {
-         res.send(`Node and express server running on port ${PORT}`);
-       });
+    app.get("/", (req, res) => {
+        res.send(`Node and express server running on port ${PORT}`);
+    });
 
-       app.listen(PORT, () => {
-         console.log(`Your server is running on port ${PORT}`);
-       });
+    app.listen(PORT, () => {
+        console.log(`Your server is running on port ${PORT}`);
+    });
    ```
+
 3. In Postman try the following routes (urls) and you should get the appropriate responses that we designated.
 
 - `http://localhost:4000/contact` using the `GET` and `POST` protocols
@@ -165,29 +168,29 @@ In this section we will create a simple example of how to use middleware with ou
 1. Modify the `crmRoutes.js` file to match the following code. The get request method is the only part of the file that has been modified.
 
    ```
-       const routes = (app) => {
-         app
-           .route("/contact")
-           .get(
-             (req, res, next) => {
-               //middleware
-               console.log(`Request from: ${req.originalUrl}`);
-               console.log(`Request from: ${req.method}`);
-               next();
-             },
-             (req, res, next) => {
-               res.send("GET request successful!");
-             }
-           )
-           .post((req, res) => res.send("POST request successful!"));
+    const routes = (app) => {
+        app
+        .route("/contact")
+        .get(
+            (req, res, next) => {
+            //middleware
+            console.log(`Request from: ${req.originalUrl}`);
+            console.log(`Request from: ${req.method}`);
+            next();
+            },
+            (req, res, next) => {
+            res.send("GET request successful!");
+            }
+        )
+        .post((req, res) => res.send("POST request successful!"));
 
-         app
-           .route("/contact/:contactID")
-           .put((req, res) => res.send("PUT request successful!"))
-           .delete((req, res) => res.send("DELETE request successful!"));
-       };
+        app
+        .route("/contact/:contactID")
+        .put((req, res) => res.send("PUT request successful!"))
+        .delete((req, res) => res.send("DELETE request successful!"));
+    };
 
-       export default routes;
+    export default routes;
    ```
 
    - The next argument allows the first function to call the next function. This allows us to use middleware in the first function to access/modify the http request and response. In this example we are simply getting more information of the url that was requested and the method used in the request. In the second function we are sending the specified response that we want to give.
